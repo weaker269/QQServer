@@ -1,10 +1,14 @@
 package com.wct.QQCommon;
 
+import java.io.Serializable;
+
 /**
  * @author WenCT
  * 表示一个用户信息
  */
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private String uid;//用户id
     private String password;//用户密码
 
