@@ -15,6 +15,9 @@ public class Message implements Serializable {
     private String sendTime;//发送时间
     private String messageType;//消息类型
 
+    public Message() {
+    }
+
     public Message(String sender, String receiver, String content, String sendTime) {
         this.sender = sender;
         this.receiver = receiver;
