@@ -29,12 +29,13 @@ public class ServerConnectClientThread extends Thread{
                 Message ms = (Message) ois.readObject();
                 //使用message
                 if(ms.getMessageType().equals(MessageType.MESSAGE_GET_ONLINE_USER)){//拉取在线用户列表请求
+                    System.out.println(ms.getSender() + " 要在线用户列表");
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     Message retMs = new Message();
                     retMs.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
                     retMs.setContent(ManageClientThread.getOnlineUserList());
+                    retMs.setReceiver(ms.getSender());
                     oos.writeObject(retMs);
-                    oos.close();
                 }
                 else{//其他
 

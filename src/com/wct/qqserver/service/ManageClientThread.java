@@ -17,13 +17,12 @@ public class ManageClientThread {
         return cm.get(uid);
     }
     public static String getOnlineUserList(){
-        StringBuilder builder = new StringBuilder();
+        String res = "";
         for(Map.Entry<String,ServerConnectClientThread> entry : cm.entrySet()){
             String userId = entry.getKey();
-            builder.append(userId+" ");
+            res += userId+" ";
         }
-        if(!builder.equals("")) builder.delete(builder.length()-1,builder.length());
-        System.out.println("在线用户列表是： " + builder.toString());
-        return builder.toString();
+        System.out.println("在线用户列表是： " + res);
+        return res;
     }
 }
