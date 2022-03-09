@@ -1,9 +1,11 @@
 package com.wct.qqserver.service;
 
 import com.wct.QQCommon.Message;
+import com.wct.QQCommon.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -22,10 +24,21 @@ public class ServerConnectClientThread extends Thread{
     public void run() { //run状态，线程可以接受和发送消息
         while(true){
             try {
-                System.out.println("服务端和客户端" + uid + "保持通信，读取数据....");
+                System.out.println("服务端和客户端  " + uid + "  保持通信，读取数据....");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Message ms = (Message) ois.readObject();
-                //后面会使用message
+                //使用message
+                if(ms.getMessageType().equals(MessageType.MESSAGE_GET_ONLINE_USER)){//拉取在线用户列表请求
+                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                    Message retMs = new Message();
+                    retMs.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
+                    retMs.setContent(ManageClientThread.getOnlineUserList());
+                    oos.writeObject(retMs);
+                    oos.close();
+                }
+                else{//其他
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

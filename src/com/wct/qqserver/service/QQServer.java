@@ -22,9 +22,9 @@ public class QQServer {
     private static ConcurrentMap<String,User> validUsers = new ConcurrentHashMap<>();
     static {
         validUsers.put("100",new User("100","123456"));
-        validUsers.put("100",new User("200","123456"));
-        validUsers.put("100",new User("温楚涛","123456"));
-        validUsers.put("100",new User("wct","123456"));
+        validUsers.put("200",new User("200","123456"));
+        validUsers.put("温楚涛",new User("温楚涛","123456"));
+        validUsers.put("wct",new User("wct","123456"));
     }
     private boolean checkUser(String uid , String pwd){
         User user = validUsers.get(uid);
