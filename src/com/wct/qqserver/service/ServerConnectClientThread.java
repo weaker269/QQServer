@@ -31,11 +31,23 @@ public class ServerConnectClientThread extends Thread{
                 if(ms.getMessageType().equals(MessageType.MESSAGE_GET_ONLINE_USER)){//拉取在线用户列表请求
                     System.out.println(ms.getSender() + " 要在线用户列表");
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                    Message retMs = new Message();
-                    retMs.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
-                    retMs.setContent(ManageClientThread.getOnlineUserList());
-                    retMs.setReceiver(ms.getSender());
-                    oos.writeObject(retMs);
+                    Message retMes = new Message();
+                    retMes.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
+                    retMes.setContent(ManageClientThread.getOnlineUserList());
+                    retMes.setReceiver(ms.getSender());
+                    oos.writeObject(retMes);
+                }
+                else if(ms.getMessageType().equals(MessageType.MESSAGE_CLIENT_EXIT)){
+                    System.out.println(ms.getSender() + " 请求退出");
+                    Message retMes = new Message();
+                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                    retMes.setReceiver(ms.getSender());
+                    retMes.setMessageType(MessageType.MESSAGE_CLIENT_EXIT_SUCCESS);
+                    oos.writeObject(retMes);
+                    ManageClientThread.removeServerConnectClientThread(uid);
+                    System.out.println("服务端成功使该用户退出");
+                    socket.close();
+                    break;
                 }
                 else{//其他
 

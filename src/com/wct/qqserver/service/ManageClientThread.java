@@ -25,4 +25,7 @@ public class ManageClientThread {
         System.out.println("在线用户列表是： " + res);
         return res;
     }
+    public static void removeServerConnectClientThread(String uid){
+          cm.remove(uid);
+    }
 }
