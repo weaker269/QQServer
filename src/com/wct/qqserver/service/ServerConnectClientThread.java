@@ -20,6 +20,10 @@ public class ServerConnectClientThread extends Thread{
            this.uid = uid;
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
+
     @Override
     public void run() { //run状态，线程可以接受和发送消息
         while(true){
@@ -48,6 +52,25 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println("服务端成功使该用户退出");
                     socket.close();
                     break;
+                }
+                else if(ms.getMessageType().equals(MessageType.MESSAGE_COMM_MES)){
+                    System.out.println(ms.getSender() + " 请求发送消息给 " + ms.getReceiver());
+                    if(!ManageClientThread.containsUser(ms.getReceiver())){
+                        System.out.println("接收方离线，无法发送!");
+                    }
+                    else{
+                        try {
+                            ServerConnectClientThread serverConnectClientThread =
+                                    ManageClientThread.getServerConnectClientThread(ms.getReceiver());
+                            Socket socket = serverConnectClientThread.getSocket();
+                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                            oos.writeObject(ms);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
                 }
                 else{//其他
 

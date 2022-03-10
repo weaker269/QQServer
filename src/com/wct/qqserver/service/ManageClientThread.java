@@ -28,4 +28,7 @@ public class ManageClientThread {
     public static void removeServerConnectClientThread(String uid){
           cm.remove(uid);
     }
+    public static boolean containsUser(String uid){
+        return cm.containsKey(uid);
+    }
 }

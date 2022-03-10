@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -20,6 +21,7 @@ public class QQServer {
     private ServerSocket serverSocket = null;
     //用户集合，如果这些用户登录即成功
     private static ConcurrentMap<String,User> validUsers = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, Vector<String>> userMessageTs = new ConcurrentHashMap<>();
     static {
         validUsers.put("100",new User("100","123456"));
         validUsers.put("200",new User("200","123456"));
