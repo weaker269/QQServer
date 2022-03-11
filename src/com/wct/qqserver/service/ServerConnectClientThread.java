@@ -36,6 +36,7 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println(ms.getSender() + " 要在线用户列表");
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     Message retMes = new Message();
+                    retMes.setSender("Server");
                     retMes.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
                     retMes.setContent(ManageClientThread.getOnlineUserList());
                     retMes.setReceiver(ms.getSender());
@@ -45,6 +46,7 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println(ms.getSender() + " 请求退出");
                     Message retMes = new Message();
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                    retMes.setSender("Server");
                     retMes.setReceiver(ms.getSender());
                     retMes.setMessageType(MessageType.MESSAGE_CLIENT_EXIT_SUCCESS);
                     oos.writeObject(retMes);
@@ -56,7 +58,22 @@ public class ServerConnectClientThread extends Thread{
                 else if(ms.getMessageType().equals(MessageType.MESSAGE_COMM_MES)){
                     System.out.println(ms.getSender() + " 请求发送消息给 " + ms.getReceiver());
                     if(!ManageClientThread.containsUser(ms.getReceiver())){
-                        System.out.println("接收方离线，无法发送!");
+                        System.out.println("接收方离线，无法发送! 返回错误信息");
+                        Message ErrorMes = new Message();
+                        ErrorMes.setContent("接收方 " + ms.getReceiver() + " 离线，发送失败!");
+                        ErrorMes.setReceiver(ms.getSender());
+                        ErrorMes.setMessageType(MessageType.MESSAGE_ERROR_RECEIVER_OFFLINE);
+                        try {
+                            ServerConnectClientThread serverConnectClientThread =
+                                    ManageClientThread.getServerConnectClientThread(ms.getSender());
+                            Socket socket = serverConnectClientThread.getSocket();
+                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                            oos.writeObject(ErrorMes);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
                     else{
                         try {

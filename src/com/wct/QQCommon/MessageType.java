@@ -13,4 +13,5 @@ public interface MessageType {
    String MESSAGE_RET_ONLINE_USER = "5"; //返回在线用户列表
    String MESSAGE_CLIENT_EXIT = "6"; //客户端请求退出
    String MESSAGE_CLIENT_EXIT_SUCCESS = "7"; //客户端成功退出
+   String MESSAGE_ERROR_RECEIVER_OFFLINE = "8"; // 接收者离线，发送失败
 }
