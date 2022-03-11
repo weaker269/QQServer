@@ -33,61 +33,31 @@ public class ServerConnectClientThread extends Thread{
                 Message ms = (Message) ois.readObject();
                 //使用message
                 if(ms.getMessageType().equals(MessageType.MESSAGE_GET_ONLINE_USER)){//拉取在线用户列表请求
-                    System.out.println(ms.getSender() + " 要在线用户列表");
-                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                    Message retMes = new Message();
-                    retMes.setSender("Server");
-                    retMes.setMessageType(MessageType.MESSAGE_RET_ONLINE_USER);
-                    retMes.setContent(ManageClientThread.getOnlineUserList());
-                    retMes.setReceiver(ms.getSender());
-                    oos.writeObject(retMes);
+                    ServerService.UserList(ms);
                 }
                 else if(ms.getMessageType().equals(MessageType.MESSAGE_CLIENT_EXIT)){
-                    System.out.println(ms.getSender() + " 请求退出");
-                    Message retMes = new Message();
-                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                    retMes.setSender("Server");
-                    retMes.setReceiver(ms.getSender());
-                    retMes.setMessageType(MessageType.MESSAGE_CLIENT_EXIT_SUCCESS);
-                    oos.writeObject(retMes);
-                    ManageClientThread.removeServerConnectClientThread(uid);
-                    System.out.println("服务端成功使该用户退出");
-                    socket.close();
+                    ServerService.ExitMessage(ms);
+                    this.socket.close();
                     break;
                 }
                 else if(ms.getMessageType().equals(MessageType.MESSAGE_COMM_MES)){
                     System.out.println(ms.getSender() + " 请求发送消息给 " + ms.getReceiver());
                     if(!ManageClientThread.containsUser(ms.getReceiver())){
-                        System.out.println("接收方离线，无法发送! 返回错误信息");
-                        Message ErrorMes = new Message();
-                        ErrorMes.setContent("接收方 " + ms.getReceiver() + " 离线，发送失败!");
-                        ErrorMes.setReceiver(ms.getSender());
-                        ErrorMes.setMessageType(MessageType.MESSAGE_ERROR_RECEIVER_OFFLINE);
-                        try {
-                            ServerConnectClientThread serverConnectClientThread =
-                                    ManageClientThread.getServerConnectClientThread(ms.getSender());
-                            Socket socket = serverConnectClientThread.getSocket();
-                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                            oos.writeObject(ErrorMes);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        ServerService.ErrorMessage(ms);
+                    }
+                    else{//接收方在线
+                        ServerService.sendMessage(ms);
+                    }
 
-
+                }
+                else if(ms.getMessageType().equals(MessageType.MESSAGE_FILE_MES)){
+                    System.out.println(ms.getSender() + " 请求发送文件给 " + ms.getReceiver());
+                    if(!ManageClientThread.containsUser(ms.getReceiver())){//接收方离线,发送失败
+                        ServerService.ErrorMessage(ms);
                     }
                     else{
-                        try {
-                            ServerConnectClientThread serverConnectClientThread =
-                                    ManageClientThread.getServerConnectClientThread(ms.getReceiver());
-                            Socket socket = serverConnectClientThread.getSocket();
-                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                            oos.writeObject(ms);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                        ServerService.sendMessage(ms);
                     }
-
                 }
                 else{//其他
 
